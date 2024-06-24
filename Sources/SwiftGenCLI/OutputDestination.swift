@@ -3,7 +3,7 @@
 // Copyright © 2022 SwiftGen
 // MIT Licence
 //
-
+import Foundation
 import PathKit
 
 public enum OutputDestination {
@@ -31,7 +31,9 @@ extension OutputDestination {
       print(content)
     case .file(let path):
       if try onlyIfChanged && path.exists && path.read(.utf8) == content {
-        logMessage(.info, "Not writing the file as content is unchanged")
+        logMessage(.info, "Not writing the file as content is unchanged, but updating attributes")
+        let now = Date()
+        try FileManager.default.setAttributes([.creationDate: now, .modificationDate: now], ofItemAtPath: path.string)
         return
       }
       try path.write(content)
